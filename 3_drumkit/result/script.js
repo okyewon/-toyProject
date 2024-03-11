@@ -33,7 +33,9 @@
 
   const playSound = (keycode) => {
     const $audio = get(`audio[data-key="${keycode}"]`)
-    if ($audio) {
+    const $key = get(`div[data-key="${keycode}"]`)
+    if ($audio && $key) {
+      $key.classList.add('playing')
       $audio.currentTime = 0
       $audio.play()
     }
@@ -43,12 +45,26 @@
     playSound(e.keyCode)
   }
 
+  const onMouseDown = (e) => {
+    const keycode = e.target.getAttribute('data-key')
+    console.log(e.target.getAttribute('data-key'))
+    playSound(keycode)
+  }
+
+  const onTransitionEnd = (e) => {
+    if(e.propertyName === 'transform') {
+      e.target.classList.remove('playing')
+    }
+  }
+
   const init = () => {
     window.addEventListener('keydown', onKeyDown)
     keys.forEach((key, index) => {
       const audio = getAudioElement(index)
       key.appendChild(audio)
       key.dataset.key = drumSounds[index].key
+      key.addEventListener('click', onMouseDown)
+      key.addEventListener('transitionend', onTransitionEnd)
     })
   }
 
