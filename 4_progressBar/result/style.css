@@ -16,6 +16,7 @@
   height: 8px;
   background: #ff9800;
   width: 0%;
+  transition: width 0.3s;
 }
 
 .content img {
