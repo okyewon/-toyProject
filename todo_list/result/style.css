@@ -33,6 +33,7 @@ button > i {
 }
 
 h2 {
+  margin: 0;
   font-size: 28px;
   font-weight: 900;
 }
@@ -71,7 +72,7 @@ h2 {
 }
 
 .todos {
-  margin-top: 106px;
+  margin-top: 115px;
   overflow: auto;
 }
 
