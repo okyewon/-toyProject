@@ -63,6 +63,8 @@
 
   const addTodo = (e) => {
     e.preventDefault();
+    const content = $todoInput.value
+    if (!content) return
     const todo = {
       content: $todoInput.value,
       completed: false,
@@ -74,6 +76,7 @@
       },
       body: JSON.stringify(todo),
     })
+      .then((response) => response.json())
       .then(getTodos)
       .then(() => {
         $todoInput.value = ''
@@ -95,6 +98,9 @@
       },
       body: JSON.stringify({completed}),
     })
+      .then((response) => response.json())
+      .then(getTodos)
+      .catch((error) => console.error(error.message))
   }
 
   const changeEditMode = (e) => {
@@ -105,7 +111,7 @@
     const $editButtons = $item.querySelector('.edit_buttons')
     const value = $editInput.value
 
-    if(e.target.className == 'todo_edit_button') {
+    if(e.target.className === 'todo_edit_button') {
       $label.style.display = 'none'
       $editInput.style.display = 'block'
       $contentButtons.style.display = 'none'
@@ -115,7 +121,7 @@
       $editInput.value = value
     }
 
-    if(e.target.className == 'todo_edit_cancel_button') {
+    if(e.target.className === 'todo_edit_cancel_button') {
       $label.style.display = 'block'
       $editInput.style.display = 'none'
       $contentButtons.style.display = 'block'
@@ -136,6 +142,7 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({content})
     })
+      .then((response) => response.json())
       .then(getTodos)
       .catch((error) => console.error(error))
   }
@@ -146,6 +153,7 @@
     const id = $item.dataset.id
 
     fetch(`${API_URL}/${id}`, {method: 'DELETE'})
+      .then((response) => response.json())
       .then(getTodos)
       .catch((error) => console.error(error))
   }
@@ -154,6 +162,7 @@
     window.addEventListener('DOMContentLoaded', () =>{ 
       getTodos();
     })
+    
     $form.addEventListener('submit', addTodo)
     $todos.addEventListener('click', toggleTodo)
     $todos.addEventListener('click', changeEditMode)
