@@ -109,7 +109,20 @@ section {
 }
 
 .contents.list {
+    display: none;
+}
+
+.contents.view {
     display: flex;
+}
+
+.contents.view figure {
+    flex: 0 0 50%;
+    margin: 0;
+}
+
+.contents.view figure video {
+    width: 100%;
 }
 
 .contents figure {
@@ -213,6 +226,50 @@ section {
     border: 1px solid #ff4e45;
     color: #ff4e45;
     text-align: center;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+  
+.controls button {
+    background: #2f62b3;
+    border: 0;
+    color: #fff;
+    margin: 0 5px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+  
+.controls button:hover {
+    background-color: #2d6bcd;
+}
+  
+.controls .js-progress {
+    width: 100%;
+    border-radius: 0;
+}
+  
+.controls .js-progress::-webkit-progress-bar {
+    background-color: #fff;
+}
+  
+.controls .js-progress::-webkit-progress-value {
+    background: #2d6bcd;
+}
+  
+.controls .js-volume::-webkit-slider-runnable-track {
+    background-color: #fff;
+}
+  
+.controls .js-volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: #2d6bcd;
+    width: 15px;
+    height: 15px;
 }
 
 @media (max-width: 1024px) {
