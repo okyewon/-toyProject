@@ -85,6 +85,17 @@
           initial += angleValue
           index++
         }
+
+        if(donutChart) {
+          this.drawCanvas(
+            centerX,
+            centerY,
+            this.radius / 3.5,
+            0,
+            Math.PI * 2,
+            'white'
+          )
+        }
       }
   }
 
@@ -111,5 +122,6 @@
   const {width, height, radius} = option
   chart.getTotal()
   chart.drawLegends()
-  chart.drawChart(false, width / 2 -10 - radius, height / 2, labelOption)
+  chart.drawChart(false, width / 2 - 10 - radius, height / 2, labelOption)
+  chart.drawChart(true, width / 2 + 10 + radius, height / 2, labelOption)
 })()
