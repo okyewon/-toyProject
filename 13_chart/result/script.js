@@ -31,6 +31,20 @@
         }
       }
 
+      drawLegends = () => {
+        let index = 0;
+        for (const [instruements, value] of this.datas) {
+          this.label += 
+            "<span style ='background-color:" +
+            this.colors[index] +
+            "'>" +
+            instruements +
+            '</span>'
+            index++ 
+        }
+        this.legends.innerHTML = this.label
+      }
+
       drawCanvas = (centerX, centerY, radius, startAngle, endAngle, color) => {
         this.ctx.beginPath()
         this.ctx.fillStyle = color
@@ -96,6 +110,6 @@
   const chart = new Chart('.canvas', data, option)
   const {width, height, radius} = option
   chart.getTotal()
-  // chart.drawlegends()
+  chart.drawLegends()
   chart.drawChart(false, width / 2 -10 - radius, height / 2, labelOption)
 })()
