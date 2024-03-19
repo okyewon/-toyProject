@@ -3,6 +3,10 @@
 
   const get = (element) => document.querySelector(element)
 
+  const keyEvent = (control, func) => {
+    document.addEventListener(control, func, false)
+  }
+
   class BrickBreak {
     constructor(parent = 'body', data = {}) {
       this.parent = get(parent)
@@ -50,8 +54,38 @@
           this.bricks[colIndex][rowIndex] = {x: 0, y: 0, status: 1}
         }
       }
-
+      this.keyEvent()
       this.draw()
+    }
+
+    keyupEvent = (event) => {
+      if('Right' === event.key || 'ArrowRight' === event.key) {
+        this.rightPressed = false
+      } else if ('Left' === event.key || 'ArrowLeft' === event.key) {
+        this.leftPressed = false
+      }
+    }
+
+    keydownEvent = (event) => {
+      if('Right' === event.key || 'ArrowRight' === event.key) {
+        this.rightPressed = true
+      } else if ('Left' === event.key || 'ArrowLeft' === event.key) {
+        this.leftPressed = true
+      }
+    }
+
+    mousemoveEvent = (event) => {
+      const positionX = event.clientX - this.canvas.offsetLeft
+
+      if(0 < positionX && positionX < this.canvas.width) {
+        this.paddleX = positionX - this.paddleWidth / 2
+      }
+    }
+
+    keyEvent = () => {
+      keyEvent('keyup', this.keyupEvent)
+      keyEvent('keydown', this.keydownEvent)
+      keyEvent('mousemove', this.mousemoveEvent)
     }
 
     drawBall = () => {
@@ -60,6 +94,59 @@
       this.ctx.fillStyle = this.ballColor
       this.ctx.fill()
       this.ctx.closePath()
+    }
+
+    drawPaddle = () => {
+      this.ctx.beginPath()
+      this.ctx.rect(
+        this.paddleX,
+        this.canvas.height - this.paddleHeight,
+        this.paddleWidth,
+        this.paddleHeight
+      )
+      this.ctx.fillStyle = this.paddleColor
+      this.ctx.fill()
+      this.ctx.closePath()
+    }
+
+    drawScore = () => {
+      this.ctx.font = this.fontFamily
+      this.ctx.fillStyle = '#fff'
+      this.ctx.fillText('점수 : ' + this.score, 10, 22)
+    }
+
+    drawLives = () => {
+      this.ctx.font = this.fontFamily
+      this.ctx.fillStyle = '#fff'
+      this.ctx.fillText('목숨 : ' + this.lives, this.canvas.width - 68, 22)
+    }
+
+    drawBricks = () => {
+      let brickX = 0
+      let brickY = 0
+      let gradient = this.ctx.createLinearGradient(0, 0, 200, 0)
+      gradient.addColorStop(0, this.brickStartColor)
+      gradient.addColorStop(1, this.brickEndColor)
+
+      for (let colIndex = 0; colIndex < this.brickCol; colIndex++) {
+        for (let rowIndex = 0; rowIndex < this.brickRow; rowIndex++) {
+          if(1 !== this.bricks[colIndex][rowIndex].status) {
+            continue
+          }
+          brickX = colIndex * (this.brickWidth + this.brickPad) + this.brickPosX
+          brickY = rowIndex * (this.brickHeight + this.brickPad) + this.brickPosY
+
+          this.bricks[colIndex][rowIndex].x = brickX
+          this.bricks[colIndex][rowIndex].y = brickY
+          
+          this.ctx.beginPath()
+          this.ctx.rect(brickX, brickY, this.brickWidth, this.brickHeight)
+          this.ctx.fillStyle = gradient
+          this.ctx.fill()
+          this.ctx.closePath()
+        }
+        
+      }
     }
 
     draw = () => {
@@ -71,11 +158,44 @@
         this.canvas.height / 2 - this.image.height / 2
       )
       this.drawBall()
-      // this.drawPaddle()
-      // this.drawBricks()
-      // this.drawScore()
-      // this.drawLives()
+      this.drawPaddle()
+      this.drawBricks()
+      this.drawScore()
+      this.drawLives()
       // this.detectCollision()
+
+      if(this.ballX + this.directX > this.canvas.width - this.radius || this.ballX + this.directX < this.radius) {
+        this.directX = -this.directX
+      }
+
+      if(this.ballY + this.directY < this.radius) {
+        this.directY = -this.directY
+      } else if(this.ballY + this.directY > this.canvas.height - this.radius) {
+        if(
+          this.ballX > this.paddleX &&
+          this.ballX < this.paddleX + this.paddleWidth
+        ) {
+          this.directY = -this.directY
+        } else {
+          this.lives--
+          if(0 === this.lives) {
+            alert('실패하였습니다.')
+            this.reset()
+          } else {
+            this.ballX = this.canvas.width / 2
+            this.ballY = this.canvas.height - this.paddleHeight
+            this.directX = this.speed
+            this.directY = -this.speed
+            this.paddleX = (this.canvas.width - this.paddleWidth)
+          }
+        }
+      }
+
+      if(this.rightPressed && this.paddleX < this.canvas.width - this.paddleWidth) {
+        this.paddleX += 7
+      } else if (this.leftPressed && 0 < this.paddleX) {
+        this.paddleX -= 7
+      }
 
       this.ballX += this.directX
       this.ballY += this.directY
