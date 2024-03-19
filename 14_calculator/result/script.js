@@ -17,6 +17,29 @@
       this.operation = null
     }
 
+    reset() {
+      this.currentValue = ''
+      this.prevValue = ''
+      this.resetOperation()
+    }
+
+    clear() {
+      if(this.currentValue) {
+        this.currentValue = ''
+        return
+      }
+
+      if(this.operation) {
+        this.resetOperation()
+        this.currentValue = this.prevValue
+        return
+      }
+
+      if(this.prevValue) {
+        this.prevValue = ''
+      }
+    }
+
     appendNumber(number) {
       if(number === '.' && this.currentValue.includes('.')) return
       this.currentValue = this.currentValue.toString() + number.toString()
@@ -39,6 +62,11 @@
         this.element.value = this.currentValue
         return
       }
+      if(this.prevValue) {
+        this.element.value = this.prevValue
+        return
+      }
+      this.element.value = 0
     }
 
     resetOperation() {
@@ -81,6 +109,8 @@
   const numberButtons = getAll('.cell_button.number')
   const operationButtons = getAll('.cell_button.operation')
   const computeButton = get('.cell_button.compute')
+  const clearButton = get('.cell_button.clear')
+  const allClearButton = get('.cell_button.all_clear')
   const display = get('.display')
 
   const calculator = new Calculator(display)
@@ -101,6 +131,16 @@
 
   computeButton.addEventListener('click', () => {
     calculator.compute()
+    calculator.updateDisplay()
+  })
+
+  clearButton.addEventListener('click', () => {
+    calculator.clear()
+    calculator.updateDisplay()
+  })
+
+  clearButton.addEventListener('click', () => {
+    calculator.reset()
     calculator.updateDisplay()
   })
 })()
