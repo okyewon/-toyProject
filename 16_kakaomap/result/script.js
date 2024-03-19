@@ -31,7 +31,76 @@
     return document.querySelector(target)
   }
 
-  const init = () => {}
+  const $map = get('#map')
+  const $geoLocationButton = get('.geolocation_button')
+
+  const mapContainer = new kakao.maps.Map($map, {
+    center: new kakao.maps.LatLng(defaultPos.lat, defaultPos.lng),
+    level: 3
+  })
+
+  const createMarkerImage = () => {
+    const markerImageSrc = 'assets/marker.png'
+    const imageSize = new kakao.maps.Size(30, 46)
+    return new kakao.maps.MarkerImage(markerImageSrc, imageSize)
+  }
+
+  const createMarker = (lat, lng) => {
+    const marker = new kakao.maps.Marker({
+      map: mapContainer,
+      position: new kakao.maps.LatLng(lat, lng),
+      image: createMarkerImage(),
+    })
+    return marker
+  }
+
+  const createShopElement = () => {
+    shops.map(shop => {
+      const {lat, lng} = shop
+      const marker = createMarker(lat, lng)
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `<div style="width:150px;text-align:center;padding:6px 2px;">
+                  <a href="https://place.map.kakao.com/${shop.id}" target="_blank">${shop.name}</a>
+                </div>`,
+      })
+      infowindow.open(mapContainer, marker)
+    })
+  }
+
+  const successGeolocation = (position) => {
+    const {latitude, longitude} = position.coords
+    mapContainer.setCenter(new kakao.maps.LatLng(latitude, longitude))
+    const marker = createMarker(latitude, longitude)
+    marker.setMap(mapContainer)
+  }
+
+  const errorGeolocation = (error) => {
+    if(error.code === 1) {
+      alert('위치 정보를 허용해주세요')
+    } else if(error.code = 2) {
+      alert('사용할 수 없는 위치입니다.')
+    } else if(error.code = 3) {
+      alert('타임아웃이 발생했습니다.')
+    } else {
+      alert('오류가 발생했습니다.')
+    }
+  }
+
+  const getLocation = () => {
+    if('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        successGeolocation,
+        errorGeolocation
+      )
+    } 
+  }
+
+  const init = () => {
+    $geoLocationButton.addEventListener('click',() => {
+      getLocation()
+    })
+    createShopElement()
+  }
 
   init()
 })()

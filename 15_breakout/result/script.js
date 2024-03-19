@@ -121,6 +121,39 @@
       this.ctx.fillText('목숨 : ' + this.lives, this.canvas.width - 68, 22)
     }
 
+    detectCollision = () => {
+      let currentBrick = {}
+
+      for (let colIndex = 0; colIndex < this.brickCol; colIndex++) {
+        for (let rowIndex = 0; rowIndex < this.brickRow; rowIndex++) {
+          currentBrick = this.bricks[colIndex][rowIndex]
+          
+          if(1 !== currentBrick.status) {
+            continue
+          }
+          
+          if (
+            this.ballX > currentBrick.x &&
+            this.ballX < currentBrick.x + this.brickWidth &&
+            this.ballY > currentBrick.y &&
+            this.ballY < currentBrick.y + this.brickHeight
+          ) {
+            this.directY = -this.directY
+            // 벽돌깨짐
+            currentBrick.status = 0
+            this.score++
+
+            if (this.score !== this.brickCol * this.brickRow) {
+              continue
+            }
+            alert('승리했습니다!')
+            this.reset()
+          }
+        }
+        
+      }
+    }
+
     drawBricks = () => {
       let brickX = 0
       let brickY = 0
@@ -162,7 +195,7 @@
       this.drawBricks()
       this.drawScore()
       this.drawLives()
-      // this.detectCollision()
+      this.detectCollision()
 
       if(this.ballX + this.directX > this.canvas.width - this.radius || this.ballX + this.directX < this.radius) {
         this.directX = -this.directX
