@@ -86,12 +86,16 @@
     download() {
       const videoFile = new Blob(this.blobs, {type: 'video/webm'})
       const url = window.URL.createObjectURL(videoFile)
+      // 다운로드 기능을 할 a 태그 생성
       const downloader = document.createElement('a')
       downloader.style.display = 'none'
+      // attribute 속성으로 다운로드 기능 구현
       downloader.setAttribute('href', url)
       downloader.setAttribute('download', 'test_video.webm')
       this.container.appendChild(downloader)
+      // 생성 즉시 click 동작
       downloader.click()
+      // 다운로드 후 downloader 요소 및 url 삭제
       setTimeout(() => {
         this.container.removeChild(downloader)
         window.URL.revokeObjectURL(url)
