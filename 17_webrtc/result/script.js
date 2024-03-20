@@ -27,7 +27,7 @@
     events() {
       this.btnRecord.addEventListener('click', this.toggleRecord.bind(this))
       this.btnPlay.addEventListener('click', this.play.bind(this))
-      // this.btnDownload.addEventListener('click', this.download.bind(this))
+      this.btnDownload.addEventListener('click', this.download.bind(this))
     }
 
     success(audioVideo) {
@@ -81,6 +81,21 @@
       this.recordVideo.src = window.URL.createObjectURL(
         new Blob(this.blobs, {type: 'video/webm'})
       )
+    }
+
+    download() {
+      const videoFile = new Blob(this.blobs, {type: 'video/webm'})
+      const url = window.URL.createObjectURL(videoFile)
+      const downloader = document.createElement('a')
+      downloader.style.display = 'none'
+      downloader.setAttribute('href', url)
+      downloader.setAttribute('download', 'test_video.webm')
+      this.container.appendChild(downloader)
+      downloader.click()
+      setTimeout(() => {
+        this.container.removeChild(downloader)
+        window.URL.revokeObjectURL(url)
+      }, 100)
     }
   }
 
